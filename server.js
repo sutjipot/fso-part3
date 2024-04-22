@@ -1,11 +1,24 @@
 const express = require('express')
+const morgan = require('morgan')
 const app = express()
 
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`running on ${PORT}`)
 })
+
+
 app.use(express.json())
+app.use(morgan(':method :url :status :response-time ms - :res[content-length] :postData'))
+
+
+morgan.token('postData', (req) => {
+  if (req.method === 'POST') {
+    return JSON.stringify(req.body)
+  }
+  return ''
+})
+
 
 
 let persons = [
