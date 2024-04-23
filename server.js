@@ -34,15 +34,6 @@ const errorHandler = (error, req, res, next) => {
 
 
 
-if (process.argv.length < 3) {
-  console.log('Please provide the password as an argument: node mongo.js <password>')
-  process.exit(1)
-}
-
-const password = process.argv[2]
-const name = process.argv[3]
-const number = process.argv[4]
-
 
 // GET ALL ENTRIES
 app.get('/api/persons', (req, res) => {
@@ -53,9 +44,9 @@ app.get('/api/persons', (req, res) => {
 })
 
 // GET INFO
-app.get('/info', (request, response) => {
+app.get('/info', (req, res) => {
   Entry.find({}).then(persons => {
-      response.send(`<p> Phonebook has info for ${persons.length} people </p> <p>${Date()}</p>`)
+      res.send(`<p> Phonebook has info for ${persons.length} people </p> <p>${Date()}</p>`)
   })
 })
 
@@ -78,7 +69,7 @@ app.get('/api/persons/:id', (req, res) => {
 // DELETE ENTRY
 app.delete('/api/persons/:id', (req, res) => {
     Entry
-    .findByIdAndRemove(req.params.id)
+    .findByIdAndDelete({ _id: req.params.id })
     .then(result => {
       res.status(204).end()})
     .catch(error => next(error))
@@ -106,11 +97,6 @@ app.post('/api/persons', (req, res) => {
           })}
 })
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
-
-app.use(unknownEndpoint)
 
 
 // UPDATE ENTRY
@@ -130,9 +116,15 @@ app.put('/api/persons/:id', (req, res) => {
     .catch(error => next(error))
 })
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+
 app.use(errorHandler)
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`running on ${PORT}`)
 })
