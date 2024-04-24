@@ -1,16 +1,5 @@
 const mongoose = require('mongoose')
 
-mongoose.set('strictQuery',false)
-
-const url = process.env.MONGODB_URI
-
-mongoose.connect(url)
-  .then(result => {
-    console.log('connected to MongoDB')
-  })
-  .catch((error) => {
-    console.log('error connecting to MongoDB:', error.message)
-  })
 
 const entrySchema = new mongoose.Schema({
     name: {
@@ -28,6 +17,7 @@ const entrySchema = new mongoose.Schema({
     required: true}
 })
 
+
 entrySchema.set('toJSON', {
     transform: (document, returnedObject) => {
       returnedObject.id = returnedObject._id.toString()
@@ -36,4 +26,4 @@ entrySchema.set('toJSON', {
     }
   })
 
-  module.exports = mongoose.model('Entry', entrySchema)
+module.exports = mongoose.model('Entry', entrySchema)
